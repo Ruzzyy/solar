@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <title>My first three.js app</title>
+    <style>
+        body { margin: 0; }
+        canvas { width: 100%; height: 100% }
+    </style>
+</head>
+<body>
+<script src="js/three.js"></script>
+<script>
+
+    const G = 6.674e-11;
+
+    function distance (a, b) {
+        return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+    }
+
+    function createObject (x0, y0, m, name, vx0, vy0, color, radius) {
+        var geometry = new THREE.SphereGeometry( radius, 15, 15 );
+        var material = new THREE.MeshBasicMaterial( { color: color } );
+        var mesh = new THREE.Mesh( geometry, material );
+
+        return {
+            x: x0,
+            y: y0,
+            mass: m,
+            name: name,
+            vx: vx0,
+            vy: vy0,
+            mesh: mesh
+        }
+    }
+
+    function updatePosition (i, objects, t) {
+        let ax = 0;
+        let ay = 0;
+        for(let j = 0; j < objects.length; j++) {
+            if(j == i) {
+                continue;
+            }
+            let r = distance(objects[i], objects[j]);
+            let tmp = (G * objects[j].mass) / (r**3);
+
+            ax += tmp * (objects[j].x - objects[i].x);
+            ay += tmp * (objects[j].y - objects[i].y);
+        }
+        objects[i].vx += t * ax;
+        objects[i].vy += t * ay;
+        objects[i].x += t * objects[i].vx;
+        objects[i].y += t * objects[i].vy;
+    }
+
+    /*
+    *
+  sun: new Gravity.Body("Sun", 695000000, 1.989e+030, new Gravity.Vector(0,0), new Gravity.Vector(0,0))
+  earth: new Gravity.Body("Earth", 6378140, 5.976e+024, new Gravity.Vector(0, 150000000000), new Gravity.Vector(29800, 0))
+
+
+  mercury: new Gravity.Body("Mercury", 2440000, 3.33e+023, new Gravity.Vector(0, 57900000000), new Gravity.Vector(47900, 0))
+  venus: new Gravity.Body("Venus", 6050000, 4.869e+024, new Gravity.Vector(0, 108000000000), new Gravity.Vector(35000, 0))
+
+  mars: new Gravity.Body("Mars", 3397200, 6.421e+023, new Gravity.Vector(0, 227940000000), new Gravity.Vector(24100, 0))
+  jupiter: new Gravity.Body("Jupiter", 71492000, 1.9e+027, new Gravity.Vector(0, 778330000000), new Gravity.Vector(13100, 0))
+  saturn: new Gravity.Body("Saturn", 60268000, 5.688e+026, new Gravity.Vector(0, 1429400000000), new Gravity.Vector(9640, 0))
+  uranus: new Gravity.Body("Uranus", 25559000, 8.686e+025, new Gravity.Vector(0, 2870990000000), new Gravity.Vector(6810, 0))
+  neptune: new Gravity.Body("Neptune", 24746000, 1.024e+026, new Gravity.Vector(0, 4504300000000), new Gravity.Vector(5430, 0))
+  pluto: new Gravity.Body("Pluto", 1137000, 1.27e+022, new Gravity.Vector(0, 5913520000000), new Gravity.Vector(4740, 0))
+    */
+
+    let t = 24 * 60 * 60; // секунды
+    let sun =   createObject(0.0 /* x */, 0.0     /* y */, 1.9885e+30 /* кг */, 'Sun',   0.0, 0.0, 0xFFD700, 0.2);
+    let mercury = createObject(0.0, 57900000000.0, 3.33e+023, 'Mercury', 47900.0, 0.0, 0x808080, 0.1);
+    let earth = createObject(0.0 /* x */, 1.5e+11 /* y - метры */, 5.972e+24  /* кг */, 'Earth', 30000.0 /* метры в секунду */, 0.0, 0x0000FF, 0.1);
+    let objects = [sun, mercury, earth];
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    for(let i = 0; i < objects.length; i++) {
+        scene.add( objects[i].mesh );
+    }
+
+    camera.position.z = 10;
+
+    function animate() {
+        requestAnimationFrame( animate );
+
+        let prev = 14960000;
+        let scaler = 1.5e+11/2;
+        for(let i = 0; i < objects.length; i++){
+            updatePosition(i, objects, t);
+
+            objects[i].mesh.position.x = objects[i].x / scaler;
+            objects[i].mesh.position.y = objects[i].y / scaler;
+        }
+
+        // cube.rotation.x += 0.01;
+        // cube.rotation.y += 0.01;
+        renderer.render( scene, camera );
+    }
+    animate();
+
+</script>
+</body>
+</html>
