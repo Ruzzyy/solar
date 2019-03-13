@@ -57,11 +57,8 @@
     *
   sun: new Gravity.Body("Sun", 695000000, 1.989e+030, new Gravity.Vector(0,0), new Gravity.Vector(0,0))
   earth: new Gravity.Body("Earth", 6378140, 5.976e+024, new Gravity.Vector(0, 150000000000), new Gravity.Vector(29800, 0))
-
-
   mercury: new Gravity.Body("Mercury", 2440000, 3.33e+023, new Gravity.Vector(0, 57900000000), new Gravity.Vector(47900, 0))
   venus: new Gravity.Body("Venus", 6050000, 4.869e+024, new Gravity.Vector(0, 108000000000), new Gravity.Vector(35000, 0))
-
   mars: new Gravity.Body("Mars", 3397200, 6.421e+023, new Gravity.Vector(0, 227940000000), new Gravity.Vector(24100, 0))
   jupiter: new Gravity.Body("Jupiter", 71492000, 1.9e+027, new Gravity.Vector(0, 778330000000), new Gravity.Vector(13100, 0))
   saturn: new Gravity.Body("Saturn", 60268000, 5.688e+026, new Gravity.Vector(0, 1429400000000), new Gravity.Vector(9640, 0))
@@ -71,10 +68,18 @@
     */
 
     let t = 24 * 60 * 60; // секунды
-    let sun =   createObject(0.0 /* x */, 0.0     /* y */, 1.9885e+30 /* кг */, 'Sun',   0.0, 0.0, 0xFFD700, 0.2);
-    let mercury = createObject(0.0, 57900000000.0, 3.33e+023, 'Mercury', 47900.0, 0.0, 0x808080, 0.1);
-    let earth = createObject(0.0 /* x */, 1.5e+11 /* y - метры */, 5.972e+24  /* кг */, 'Earth', 30000.0 /* метры в секунду */, 0.0, 0x0000FF, 0.1);
-    let objects = [sun, mercury, earth];
+    let sun =     createObject(0.0 /* x */, 0.0     /* y */, 1.9885e+30 /* кг */, 'Sun',   0.0, 0.0, 0xFFD700, 0.1);
+    let mercury = createObject(0.0, 57900000000.0, 3.33e+023, 'Mercury', 47900.0, 0.0, 0x808080, 0.05);
+    let venus =   createObject(0.0, 108000000000.0, 4.869e+024, 'Venus', 35000.0, 0.0, 0x510107, 0.05);
+    let earth =   createObject(0.0 /* x */, 1.5e+11 /* y - метры */, 5.972e+24  /* кг */, 'Earth', 30000.0 /* метры в секунду */, 0.0, 0x0000FF, 0.05);
+    let mars =    createObject(0.0, 227940000000.0, 6.421e+023, 'Mars', 24100.0, 0.0, 0xbc2a3a, 0.05);
+    let jupiter = createObject(0.0, 778330000000.0, 1.9e+027, 'Jupiter', 13100.0, 0.0, 0xf5f5dc, 0.05);
+    let saturn =  createObject(0.0, 1429400000000.0, 5.688e+026, 'Saturn', 9640.0, 0.0, 0xceb8b8, 0.05);
+    let uranus =  createObject(0.0, 2870990000000.0, 8.686e+025, 'Uranus', 6810.0, 0.0, 0xd1e7e7, 0.05);
+    let neptune = createObject(0.0, 4504300000000.0, 1.024e+026, 'Neptune', 5430.0, 0.0, 0x3f54ba, 0.05);
+    let pluto =  createObject(0.0, 5913520000000.0, 1.27e+022, 'Pluto', 4740.0, 0.0, 0x968570, 0.05);
+
+    let objects = [sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto];
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -92,8 +97,7 @@
     function animate() {
         requestAnimationFrame( animate );
 
-        let prev = 14960000;
-        let scaler = 1.5e+11/2;
+        let scaler = 778330000000/2;
         for(let i = 0; i < objects.length; i++){
             updatePosition(i, objects, t);
 
